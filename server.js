@@ -1,7 +1,8 @@
 'use strict';
 require('dotenv').config();
 const express     = require('express');
-const bodyParser  = require('body-parser');
+const helmet      = require("helmet");
+const mongoose    = require('mongoose');
 const cors        = require('cors');
 
 const apiRoutes         = require('./routes/api.js');
@@ -14,8 +15,18 @@ app.use('/public', express.static(process.cwd() + '/public'));
 
 app.use(cors({origin: '*'})); //For FCC testing purposes only
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+// Connect to MongoDB
+mongoose.connect(process.env.DB, {
+  useNewUrlParser: true,
+  useFindAndModify: false,
+  useCreateIndex: true,
+  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 5000
+})
+
+// Express parsers (replaced bodyParser package)
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 //Sample front-end
 app.route('/b/:board/')
@@ -45,6 +56,13 @@ app.use(function(req, res, next) {
     .type('text')
     .send('Not Found');
 });
+
+// Console log MongoDB connection status
+const db = mongoose.connection
+db.on('error', console.error.bind(console, 'connection error:'))
+db.once('open', () => {
+  console.log('Connected to MongoDB')
+})
 
 //Start our server and tests!
 app.listen(process.env.PORT || 3000, function () {
