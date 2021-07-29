@@ -2,18 +2,18 @@ const mongoose = require('mongoose')
 
 // Schema
 const MessageSchema = new mongoose.Schema({
-    board: { type: String },
+    board: { type: String, lowercase: true },
     text: { type: String },
-    reported: { type: Boolean },
-    delete_password: { type: String },
+    reported: { type: Boolean, default: false, select: false },
+    delete_password: { type: String, select: false },
     replies: [{
         text: { type: String },
-        reported: { type: Boolean },
-        delete_password: { type: String },
-        created_on: { type: Date }
+        reported: { type: Boolean, default: false, select: false },
+        delete_password: { type: String, select: false },
+        created_on: { type: Date, default: Date.now }
     }],
-    created_on: { type: Date },
-    bumped_on: { type: Date }
+    created_on: { type: Date, default: Date.now },
+    bumped_on: { type: Date, default: Date.now }
 })
 
 // Export Model Constructor

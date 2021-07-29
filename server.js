@@ -10,6 +10,17 @@ const fccTestingRoutes  = require('./routes/fcctesting.js');
 const runner            = require('./test-runner');
 
 const app = express();
+app.use(helmet.dnsPrefetchControl());
+app.use(
+  helmet.referrerPolicy({
+    policy: ["same-origin"],
+  })
+);
+app.use(
+  helmet.frameguard({
+    action: "sameorigin",
+  })
+);
 
 app.use('/public', express.static(process.cwd() + '/public'));
 
